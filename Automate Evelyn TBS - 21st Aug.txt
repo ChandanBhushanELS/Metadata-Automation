@@ -1,0 +1,497 @@
+// Parent MetaData Submission---------------------------------------------------------------------------------------------------------------------------Parent MetaData Submission
+function ParentMetaData_Submission() 
+{
+  var Total_rows;
+  var aSheet= SpreadsheetApp.getActiveSheet();
+  var range = aSheet.getLastRow();
+  //var current_cell = aSheet.getCurrentCell().getValue();
+  //Logger.log(current_cell);
+  var v = 0;
+  for(v = 2; v <= range; v +=1)
+  {
+    var current_cell = aSheet.getRange(v, 2).getValue();
+    Logger.log(current_cell);     
+  
+    var source = SpreadsheetApp.openById(current_cell);
+  
+    var sheetname =SpreadsheetApp.openById(current_cell).getName();
+    var sheetname1 = sheetname.split("_")[0];
+    Logger.log(sheetname1);
+
+ 
+    //ssNew.rename(sheetname);
+
+    var folder = DriveApp.getFolderById("16ebAPqnxXTgODpFcoGMXEHvYzVMWmvDK");
+    var ssNew = SpreadsheetApp.create(sheetname)
+    var file = DriveApp.getFileById(ssNew.getId());
+    folder.addFile(file);
+    DriveApp.getRootFolder().removeFile(file);
+    
+    //renaming the sheet 
+    source.rename(sheetname1 + "_Evelyn- Copy");
+   //SpeadsheetApp.getActiveSpreadsheet().renameActiveSheet("Dropdowns");
+   
+   //Checking if the following sheets are available or not?-------------
+   if(!source.getSheetByName("Title Organization Metadata"))
+   {
+     Browser.msgBox("\"Title Organization Metadata\" sheet is not present, Please add the same and then continue");
+   }
+    
+    if(!source.getSheetByName(sheetname1 + "_Metadata"))
+   { 
+      Browser.msgBox(sheetname1 + "_Metadata sheet is not present, Please add the same and then continue");
+   }
+    //Accessing the names of the sheets to rename in the copied files
+    var sheet0name = source.getSheetByName("Title Organization Metadata").getName();
+    Logger.log(sheet0name);
+    var sheet1name = source.getSheetByName(sheetname1 + "_Metadata").getName();
+    Logger.log(sheet1name);
+    if(source.getSheetByName("_Assignments"))
+    {
+    //var sheet2name = source.getSheetByName("_Assignments").getName();
+    var sheet2name = sheetname1 + "_Assignments";
+    }
+    else if(source.getSheetByName(sheetname1 +"_Assignments"))
+    {
+    var sheet2name = source.getSheetByName(sheetname1 + "_Assignments").getName();
+    }
+    else
+    {
+    Logger.log(sheet2name);
+    Browser.msgBox(sheetname1 + "_Assignments sheet not present, Please add the same and then continue");
+    }
+    if(source.getSheetByName("_Review"))
+    {
+    //var sheet3name = source.getSheetByName("_Review").getName();
+     var sheet3name = sheetname1 + "_Review";
+    }
+    else if(source.getSheetByName(sheetname1 + "_Review"))
+    {
+    var sheet3name = source.getSheetByName(sheetname1 + "_Review").getName();
+    }
+    else
+    {
+    Logger.log(sheet3name);
+    Browser.msgBox(sheetname1 + "_Review sheet not present, Please add the same and then continue");
+    }
+    if(source.getSheetByName("dropdowns"))
+    {
+    var sheet4name = source.getSheetByName("dropdowns").getName();
+    Logger.log(sheet4name);
+    }
+    else
+    {
+      Browser.msgBox("dropdowns sheet not present, Please add the same and then continue");
+    }
+   
+    //copying the sheets from the source file
+    var sheet0 = source.getSheetByName("Title Organization Metadata");
+    var sheet1 = source.getSheetByName(sheetname1 + "_Metadata");
+    
+    if(sheet2name == "_Assignments")
+    {
+    var sheet2 = source.getSheetByName(sheet2name);
+    sheet2.copyTo(ssNew).setName(sheetname1 + sheet2name);
+    }
+    else
+    {
+    var sheet2 = source.getSheetByName(sheet2name);
+    sheet2.copyTo(ssNew).setName(sheet2name);
+    }
+    if(sheet3name == "_Reviews")
+    {
+    var sheet3 = source.getSheetByName(sheet3name);
+    sheet3.copyTo(ssNew).setName(sheetname1 + sheet3name);
+    }
+    else
+    {
+    var sheet3 = source.getSheetByName(sheet3name);
+    sheet3.copyTo(ssNew).setName(sheet3name);
+    }
+    
+    sheet0.copyTo(ssNew).setName(sheet0name).protect().remove();
+    sheet1.copyTo(ssNew).setName(sheet1name).protect().remove();
+    
+    if(sheet4name)
+    {
+    var sheet4 = source.getSheetByName("dropdowns");
+    sheet4.copyTo(ssNew).setName(sheet4name);  
+    }
+    var sheetname=ssNew.getSheetByName("Sheet1");
+    ssNew.deleteSheet(sheetname);
+    
+    
+    //removing data validation from column B and E of TOM
+
+    //var lastrow_In_TOM = ssNew.getDataRange().getNumRows();
+    
+    var RemoveTOMValidation = ssNew.getSheetByName(sheet0name)
+    var lastrow_In_TOM = RemoveTOMValidation.getLastRow();
+    //RemoveTOMValidation.getRange(lastrow_In_Tom).setDataValidation(null);
+    RemoveTOMValidation.getRange(1, 5, lastrow_In_TOM).setDataValidation(null);
+    RemoveTOMValidation.getRange(1,2, lastrow_In_TOM).setDataValidation(null);  
+    
+    //removing data validation from book_code metadata    B, D, F, G, H, M, N, Q, R, U, and V
+
+    var RemoveBookCodeValidation = ssNew.getSheetByName(sheet1name);
+    var lastrow_In_MetaData = RemoveBookCodeValidation.getLastRow();
+    RemoveBookCodeValidation.getRange(1, 2,lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 4, lastrow_In_MetaData).setDataValidation(null);  
+    RemoveBookCodeValidation.getRange(1, 6, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 7, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 8, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 9, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 13, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 14, lastrow_In_MetaData).setDataValidation(null); 
+    RemoveBookCodeValidation.getRange(1, 17, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 18, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 19, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 21, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 22, lastrow_In_MetaData).setDataValidation(null);
+	RemoveBookCodeValidation.getRange(1, 23, lastrow_In_MetaData).setDataValidation(null);
+   
+    var newSheetID =ssNew.getSheetByName(sheetname1 + "_Metadata").getSheetId();
+   // Logger.log(newSheetID);
+    Total_rows = (lastrow_In_TOM + lastrow_In_MetaData)- 2; 
+    var Sol_Authored = lastrow_In_MetaData - 1;
+    var current_cell = ssNew.getUrl() + "#gid=" + newSheetID;
+    aSheet.getRange(v,2).setValue(ssNew.getUrl() + "#gid=" + newSheetID);
+    aSheet.getRange(v,3).setValue(Total_rows);
+    aSheet.getRange(v,4).setValue(Sol_Authored);
+    
+    Datewise_Sheet(sheetname1, Total_rows, Sol_Authored);
+    Required_data(current_cell);
+  }
+}
+   // SpreadsheetApp.flush();
+  // Entering Total number of rows in the Datewise sheet----------------------------------------------------
+    
+    function Datewise_Sheet(sheetname1, Total_rows, lastrow_In_Metadata) 
+    {
+    var datewise = SpreadsheetApp.openById("1uSbXrArDDAf5AVe8IbJUJPGgcMDdlj3Tz26NhSeQDFk");  
+    Logger.log(datewise.getName());
+    var datewise_sheet = datewise.getSheetByName("Evelyn-TBS Metadata");
+    Logger.log(datewise_sheet.getName());
+    var datewise_range = datewise_sheet.getRange(2, 1, datewise_sheet.getLastRow(), 1).getValues();
+    //Logger.log(datewise_range);
+      //for(row in datewise_range)
+      //{
+      //Logger.log(row)
+    for(var i=0; i < datewise_range.length; i++)
+    { 
+      if(datewise_range[i] == sheetname1)
+      {
+        //Logger.log("Data Found:");
+        datewise_sheet.getRange(i+2, 14).setValue(Total_rows);
+        datewise_sheet.getRange(i+2, 17).setValue(lastrow_In_Metadata);
+      }
+      }
+    }
+  
+
+
+
+// Child Metadata Submission-------------------------------------------------------------------------------------------------------------------------------------Child Metadata Submission 
+
+function ChildMetaData_Submission()
+{
+  var bSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Child book mapping");
+  Logger.log(bSheet);
+  var aSheet= SpreadsheetApp.getActiveSheet();
+  var range = aSheet.getLastRow();
+  //var current_cell = aSheet.getCurrentCell().getValue();
+  //Logger.log(current_cell);
+  for( var v = 2; v <= range; v++)
+  {
+    var current_cell = aSheet.getRange(v, 2).getValue();
+    Logger.log(current_cell);   
+    var source = SpreadsheetApp.openById(current_cell);
+    var sheetname =SpreadsheetApp.openById(current_cell).getName();
+    var sheetname1 = sheetname.split("_")[0];
+    Logger.log(sheetname);
+
+    //ssNew.rename(sheetname);
+    
+    var folder = DriveApp.getFolderById("16ebAPqnxXTgODpFcoGMXEHvYzVMWmvDK");
+    var ssNew = SpreadsheetApp.create(sheetname);
+    var file = DriveApp.getFileById(ssNew.getId());
+    folder.addFile(file);
+    DriveApp.getRootFolder().removeFile(file);
+    //renaming the sheet 
+    source.rename(sheetname1 + "_Evelyn- Copy");
+    //SpreadsheetApp.getActiveSpreadsheet().renameActiveSheet("Dropdowns");
+   
+    //Checking if the following sheets are available or not?-------------
+   if(!source.getSheetByName("Title Organization Metadata"))
+   {
+     Browser.msgBox("\"Title Organization Metadata\" sheet is not present, Please add the same and then continue");
+   }
+    
+    if(!source.getSheetByName(sheetname1 + "_Metadata"))
+   { 
+      Browser.msgBox(sheetname1 + "_Metadata sheet is not present, Please add the same and then continue");
+   }
+    
+    
+    //Accessing the names of the sheets to rename in the copied files
+      
+    var sheet0name = source.getSheetByName("Title Organization Metadata").getName();
+    var sheet1name = source.getSheetByName(sheetname1 + "_Metadata").getName();
+    if(source.getSheetByName("_Assignments"))
+    {
+    //var sheet2name = source.getSheetByName("_Assignments").getName();
+    var sheet2name = sheetname1 + "_Assignments";
+    }
+    else if(source.getSheetByName(sheetname1 +"_Assignments"))
+    {
+    var sheet2name = source.getSheetByName(sheetname1 + "_Assignments").getName();
+    }
+    else
+    {
+    Logger.log(sheet2name);
+    Browser.msgBox(sheetname1 + "_Assignments sheet not present, Please add the same and then continue");
+    }
+    if(source.getSheetByName("_Review"))
+    {
+    //var sheet3name = source.getSheetByName("_Review").getName();
+    var sheet3name = sheetname1 + "_Review";
+    }
+    else if(source.getSheetByName(sheetname1 + "_Review"))
+    {
+    var sheet3name = source.getSheetByName(sheetname1 + "_Review").getName();
+    }
+    else
+    {
+    //Logger.log(sheet3name);
+    Browser.msgBox(sheetname1 + "_Review sheet not present, Please add the same and then continue");
+    }
+    var sheet4name = source.getSheetByName("Parent_Title Organization Metadata (For copying/pa").getName();
+    
+    //find the parent book code value -----------------------------------------------------------------------------------------------------------
+    
+    var search_string = sheetname1;
+    var values = bSheet.getDataRange().getValues();
+     for(var i=0, iLen=values.length; i<iLen; i++)
+     {
+    
+       if(values[i][0] == search_string)
+       {
+       var search_col= values[i][1];
+         //Logger.log(search_col);
+       }
+    }
+  
+    
+    //var textFinder = bSheet.createTextFinder(search_string);
+    //Logger.log(textFinder);
+    //var search_col = textFinder.getCurrentMatch().getRow();
+    //var search_col_value = bSheet.getRange(search_col, 2).getValue();
+    //Logger.log(search_col_value); 
+    var sheet5name = source.getSheetByName(search_col + "_ParentMetadata").getName();
+    var sheet6name = source.getSheetByName("Parent Metadata Changes Needed").getName();
+    if(source.getSheetByName("dropdowns"))
+    {
+    var sheet7name = source.getSheetByName("dropdowns").getName();
+    }
+      //copying the sheets from the source file
+    
+    var sheet0 = source.getSheetByName("Title Organization Metadata");
+    var sheet1 = source.getSheetByName(sheetname1 + "_Metadata");
+    //var sheet2 = source.getSheetByName(sheetname1 + "_Assignments");
+    //var sheet3 = source.getSheetByName(sheetname1 + "_Review");
+    var sheet4 = source.getSheetByName("Parent_Title Organization Metadata (For copying/pa");
+    var sheet5 = source.getSheetByName(search_col + "_ParentMetadata");
+    var sheet6 = source.getSheetByName("Parent Metadata Changes Needed");
+   
+     if(sheet2name == "_Assignments")
+    {
+    var sheet2 = source.getSheetByName(sheet2name);
+    sheet2.copyTo(ssNew).setName(sheetname1 + sheet2name);
+    }
+    else
+    {
+    var sheet2 = source.getSheetByName(sheet2name);
+    sheet2.copyTo(ssNew).setName(sheet2name);
+    }
+    if(sheet3name == "_Reviews")
+    {
+    var sheet3 = source.getSheetByName(sheet3name);
+    sheet3.copyTo(ssNew).setName(sheetname1 + sheet3name);
+    }
+    else
+    {
+    var sheet3 = source.getSheetByName(sheet3name);
+    sheet3.copyTo(ssNew).setName(sheet3name);
+    }
+    
+    //sheet2.copyTo(ssNew).setName(sheet2name);
+    //sheet3.copyTo(ssNew).setName(sheet3name);
+    sheet4.copyTo(ssNew).setName(sheet4name);
+    sheet5.copyTo(ssNew).setName(sheet5name);
+    sheet0.copyTo(ssNew).setName(sheet0name);
+    sheet1.copyTo(ssNew).setName(sheet1name);
+    sheet6.copyTo(ssNew).setName(sheet6name); 
+    if(sheet7name)
+    {
+    var sheet7 = source.getSheetByName("dropdowns");
+    sheet7.copyTo(ssNew).setName(sheet7name);
+    }
+  
+    var sheetname=ssNew.getSheetByName("Sheet1");
+    ssNew.deleteSheet(sheetname);
+    
+    // Deleting rows from the dropdowns sheet
+    
+   // var Delete_rows 
+    
+    //removing data validation from column B and E of TOM
+    
+    //var lastrow_In_TOM = ssNew.getDataRange().getNumRows();
+    var RemoveTOMValidation = ssNew.getSheetByName(sheet0name)
+    var lastrow_In_TOM = RemoveTOMValidation.getLastRow();
+    //RemoveTOMValidation.getRange(lastrow_In_Tom).setDataValidation(null);
+    RemoveTOMValidation.getRange(1, 5, lastrow_In_TOM).setDataValidation(null);
+    RemoveTOMValidation.getRange(1,2, lastrow_In_TOM).setDataValidation(null);  
+    
+    //removing data validation from book_code metadata    B, D, F, G, H, M, N, Q, R, U, and V
+    
+    var RemoveBookCodeValidation = ssNew.getSheetByName(sheet1name);
+    var lastrow_In_MetaData = RemoveBookCodeValidation.getLastRow();
+	RemoveBookCodeValidation.getRange(1, 2,lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 4, lastrow_In_MetaData).setDataValidation(null);  
+    RemoveBookCodeValidation.getRange(1, 6, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 7, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 8, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 9, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 13, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 14, lastrow_In_MetaData).setDataValidation(null); 
+    RemoveBookCodeValidation.getRange(1, 17, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 18, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 19, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 20, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 21, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 22, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 23, lastrow_In_MetaData).setDataValidation(null);
+    RemoveBookCodeValidation.getRange(1, 24, lastrow_In_MetaData).setDataValidation(null);
+    
+   // Removing I,J and K columns from the dropdowns
+   if(ssNew.getSheetByName("dropdowns"))
+   {
+     ssNew.getSheetByName("dropdowns").deleteColumns(9,3);
+   }
+   
+    // Total number of authorable solutions 
+    
+    var Authorable_sheet = ssNew.getSheetByName(sheetname1 + "_Metadata");
+    //Logger.log(Authorable_sheet);
+    var Target_Values = Authorable_sheet.getRange(2, 20, lastrow_In_MetaData, 1).getValues();
+    //Logger.log(Target_Values);
+    var count = 0;
+    //var Match_String = "Exact";
+    for(var row in Target_Values)
+    {  
+     // Logger.log(Target_Values[row]);
+
+        if(Target_Values[row] == "Exact")
+        {
+          //Logger.log("T");
+          count++;
+        }        
+      
+    }
+    
+   
+    //Logger.log("Count is =" + count);
+    //Displaying the Metadata Sheet ID
+    var newSheetID =ssNew.getSheetByName(sheetname1 + "_Metadata").getSheetId();
+    //Logger.log(newSheetID);
+    var Total_rows = (lastrow_In_TOM + lastrow_In_MetaData)- 2;
+    var Sol_Authored = (lastrow_In_MetaData-count) - 1;
+    var current_cell = ssNew.getUrl() + "#gid=" + newSheetID;
+    aSheet.getRange(v,2).setValue(ssNew.getUrl() + "#gid=" + newSheetID); 
+    aSheet.getRange(v,3).setValue(Total_rows);
+    aSheet.getRange(v,4).setValue(Sol_Authored);
+    aSheet.getRange(v,5).setValue(count);
+   
+    Datewise_Sheet(sheetname1, Total_rows, Sol_Authored); 
+    Required_data(current_cell);
+  }
+}
+
+// Function to get the required author names with book code--------------------------------
+
+function Required_data(current_cell)
+{
+  var bSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("TimeSheet ");
+  Logger.log(bSheet.getName());
+  var brange = bSheet.getLastRow();
+  //var aSheet= SpreadsheetApp.getActiveSheet();
+  var aSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Input Sheet");
+  var range = aSheet.getLastRow();
+  
+  //var current_cell = aSheet.getCurrentCell().getValue();
+  //Logger.log(current_cell);
+  for( var v = 2; v <= range; v += 1)
+  {
+   // var current_cell = aSheet.getRange(v,2).getValue();
+    Logger.log(current_cell);     
+  
+    var source = SpreadsheetApp.openByUrl(current_cell);
+  
+    var sheetname =SpreadsheetApp.openByUrl(current_cell).getName();
+    var sheetname1 = sheetname.split("_")[0];
+    Logger.log(sheetname1);
+    if(SpreadsheetApp.openByUrl(current_cell).getSheetByName("dropdowns").getName())
+    {
+    var sheetname2 = SpreadsheetApp.openByUrl(current_cell).getSheetByName("dropdowns");
+    Logger.log(sheetname2.getName());
+    var author_email = sheetname2.getRange("D2").getValue();
+    Logger.log(author_email);
+    Logger.log(v.toString());
+  }
+    else
+    {
+      Browser.msgBox("Title Organization Metadata sheet is not present!!!!");
+    }
+  }
+  var datewise = SpreadsheetApp.openById("1uSbXrArDDAf5AVe8IbJUJPGgcMDdlj3Tz26NhSeQDFk");  
+    Logger.log(datewise.getName());
+    var datewise_sheet = datewise.getSheetByName("Evelyn-TBS Metadata");
+    Logger.log(datewise_sheet.getName());
+    var datewise_range = datewise_sheet.getRange(2, 1, datewise_sheet.getLastRow(), 1).getValues();
+    //Logger.log(datewise_range);
+      //for(row in datewise_range)
+      //{
+      //Logger.log(row)
+    for(var i=0; i < datewise_range.length; i++)
+    { 
+      if(datewise_range[i] == sheetname1)
+      {
+        //Logger.log("Data Found:" + datewise_sheet.getRange(i+2, 1).getValue().toString());
+        var Title = datewise_sheet.getRange(i+2, 9).getValue().toString();
+        var Author = datewise_sheet.getRange(i+2, 10).getValue().toString();
+        Logger.log(Title + "----" +Author);
+      }
+      }
+  for(var v = 2; v <= brange; v++)
+  {
+   var cell_value = bSheet.getRange(v, 1).getValue().toString();
+   if(cell_value == author_email)
+   {
+    bSheet.getRange(v, 2).setValue(sheetname1 + " " + Title);
+  }
+  }
+  }
+
+// Function To Copy to metadata------------------------------------------------------------
+
+function Copy_To_MetaData()
+{
+  var source = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Submission Mailer");
+  Logger.log(source.getName());
+  var destination = SpreadsheetApp.openById("1rfR7OveNLYPanFcbbGqJ0TLkDNQ6n8JsqfP1F8gLYgc");
+  Logger.log(destination.getName());
+  var date = Utilities.formatDate(new Date(), "GMT+1", "dd/MM/yyyy");
+  source.copyTo(destination).setName(date);
+  //var dest_copy = source.copyTo(destination).getName();
+}
